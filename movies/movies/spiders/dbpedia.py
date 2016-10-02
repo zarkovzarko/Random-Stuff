@@ -19,18 +19,16 @@ class DbpediaSpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            os.system("curl 'http://localhost:8050/render.html?url="+url+"&timeout=10&wait=0.5' > temp.html")
+            os.system("curl 'http://localhost:8050/render.html?url="+url+"&timeout=10&wait=5' > temp.html")
 #        for url in self.start_urls:
 #            yield SplashRequest(url=url, callback=self.parse,
 #                endpoint='render.html',
 #                args={'wait': 5},
 #            )
-            yield scrapy.Request("file:///home/zarko/Desktop/random_staff/movies/movies/temp.html", callback=self.parse)
+            yield scrapy.Request("file://" + os.getcwd() + "/temp.html", callback=self.parse)
             
     def parse_movie_page(self, response):
-        moviename = response.xpath('//span[@property="dbp:name"]/text()').extract_first()
-        if not moviename:
-            moviename = response.xpath('//span[@property="foaf:name"]/text()').extract_first()
+        moviename = response.xpath('//span[contains(@property, ":name")]/text()').extract_first()
         movieyear = response.xpath('//span[contains(@property, ":release")]/text()').extract_first()
         
         if movieyear:
@@ -47,9 +45,10 @@ class DbpediaSpider(scrapy.Spider):
         yield {'moviename':moviename, 
                'movieyear':movieyear,
                'movieuri':response.url}
+        
 
     def parse(self, response):
-        for movie in response.xpath('//a[@rev="dbo:starring"]'):
+        for movie in response.xpath('//a[contains(@rev, ":starring")]'):
             linkstomoviepage = movie.xpath("@href").extract()
             print(linkstomoviepage)
             for link in linkstomoviepage:
