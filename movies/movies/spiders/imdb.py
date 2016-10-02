@@ -4,7 +4,7 @@ class ImdbSpider(scrapy.Spider):
     name = "imdb"
     allowed_domains = ["imdb.com"]
     start_urls = (
-        'http://www.imdb.com/search/name?name=morgan%20freeman',# ovder mora lower !!! #Tom_Hanks Morgan_Freeman Catherine_Zeta_Jones
+        'http://www.imdb.com/search/name?name=morgan%20freeman',
     )
     
     def __init__(self, *args, **kwargs):
